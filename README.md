@@ -18,7 +18,9 @@
 Automated cron schedule trigger, multi-LLM orchestrator with automatic fallback, context memory buffer, GitHub Search API, authentic README reader tool, Telegram message size limiter, and emergency cold standby model:
 
 <p align="center">
-  <img src="assets/n8n_part1_workflow_canvas.png" alt="n8n Part 1 Workflow Canvas" width="100%">
+  <a href="assets/n8n_part1_workflow_canvas.png">
+    <img src="assets/n8n_part1_workflow_canvas.png" alt="n8n Part 1 Workflow Canvas">
+  </a>
 </p>
 
 ---
