@@ -12,6 +12,17 @@
 
 ---
 
+## 📸 Workflow Architecture
+
+### 🛠️ Complete n8n Automated Pipeline (Part 1)
+Automated cron schedule trigger, multi-LLM orchestrator with automatic fallback, context memory buffer, GitHub Search API, authentic README reader tool, Telegram message size limiter, and emergency cold standby model:
+
+<p align="center">
+  <img src="assets/n8n_part1_workflow_canvas.png" alt="n8n Part 1 Workflow Canvas" width="100%">
+</p>
+
+---
+
 ## 🧭 The Two-Part Ecosystem & Architectural Separation
 
 This repository is **Part 1** of the **GitHub Radar** system. The complete system consists of two complementary workflows:
@@ -104,11 +115,13 @@ Toggle the workflow to **Active**. The radar will now run automatically on sched
 
 ```text
 github-repositories-radar-part1/
-├── GITHUB_RADAR_PT1_clean.json    # Sanitized n8n workflow for Part 1
-├── .env.example                  # Environment credentials template
-├── .gitignore                    # Protection against accidental secret leaks
-├── LICENSE                       # Apache 2.0 open-source license
-└── README.md                     # Documentation & architectural guide
+├── assets/
+│   └── n8n_part1_workflow_canvas.png # Screenshot of the n8n Part 1 workflow canvas
+├── GITHUB_RADAR_PT1_clean.json       # Sanitized n8n workflow for Part 1
+├── .env.example                     # Environment credentials template
+├── .gitignore                       # Protection against accidental secret leaks
+├── LICENSE                          # Apache 2.0 open-source license
+└── README.md                        # Documentation & architectural guide
 ```
 
 ---
