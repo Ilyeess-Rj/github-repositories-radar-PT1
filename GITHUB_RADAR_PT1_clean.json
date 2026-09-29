@@ -1,0 +1,395 @@
+{
+  "name": "GITHUB_Repositories_RADAR_PT1",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-3-super-120b-a12b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatNvidia",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        3648
+      ],
+      "id": "cb7c50d8-497e-408b-939d-dc4b27d43e82",
+      "name": "NVIDIA Nemotron Chat Model3"
+    },
+    {
+      "parameters": {
+        "model": "google/gemma-4-31b-it:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        3712
+      ],
+      "id": "15df8383-872a-4a14-8446-973e7e3a78d1",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -80,
+        3472
+      ],
+      "id": "993840c6-8522-49f6-b431-28c19a0b71bb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Find 5 interesting GitHub repositories focused specifically on: automation (n8n, workflow automation, no-code/low-code AI automation), AI Agents (agentic frameworks, autonomous agents, multi-agent systems), AI models (new open-source LLMs, model releases, fine-tunes), free/low-cost AI tokens or APIs (free-tier LLM APIs, free inference providers, open API credits), and other general cutting-edge AI/agents topics (RAG, MCP, tool-use, prompt engineering frameworks).\n\nWork efficiently, in as few tool calls as possible:\n- Run ONE GitHub Search call that returns enough candidates to pick the 5 best from (the search result already includes stars, forks, description, language, topics, html_url (the repo link), and dates for every candidate).\n- For each of the 5 chosen repositories, call the README tool ONCE to read its README.\n- Only call the Get Repository tool if a specific field you truly need is missing from the search result — this should be rare.\n\nFor each repository, using only the data you already retrieved, explain:\n- The direct repo link (html_url)\n- What it does\n- How it works\n- Main technologies\n- Important features\n- Concrete ideas for how the reader personally could use or exploit this repo (not generic use cases — actionable ideas)\n- Interest score from 1 to 10",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are a GitHub Research Agent operating under a strict budget of 10 iterations, so efficiency matters more than thoroughness.\n\n*** LANGUAGE LOCK (highest priority rule, overrides everything else) ***\nYour entire final answer MUST be written in Arabic (Modern Standard Arabic). NEVER write in Russian, Chinese, French, or English, except for: repository names, owner/repo identifiers, URLs, and technical/product names (e.g. LangChain, Docker, Python) which must stay in their original Latin form. If you notice yourself drifting into another language, stop and rewrite that sentence in Arabic before continuing.\n\nThe reader's specific interests, in priority order, are: (1) automation — especially n8n and AI-driven workflow automation, (2) AI Agents — agentic frameworks, autonomous/multi-agent systems, (3) AI models — new open-source LLM releases and fine-tunes, (4) free or low-cost AI tokens/APIs — free-tier inference providers, free API credits for LLMs, (5) other cutting-edge AI/agent topics (RAG, MCP, tool-use frameworks). Bias repository selection toward these five categories, ideally covering more than one of them across the 5 picks rather than 5 repos from the same category.\n\n*** STAR THRESHOLD (hard requirement) ***\nOnly consider repositories with 50,000 stars or more. Any repository below this threshold must be discarded, even if it fits the interest categories well. If your search query does not return at least 5 repositories with 50K+ stars, broaden the query (fewer/looser keywords, drop niche terms) and search again rather than settling for lower-star repos.\n\nProcess:\n1. Use the GitHub Search tool ONCE with a query broad enough to surface at least 5-10 good candidates matching the interests above, explicitly combining topic keywords with stars:>50000 (e.g. \"n8n OR agentic-ai OR llm stars:>50000\"). Do not call Search again unless it returns zero usable results or fewer than 5 repos meet the 50K-star threshold — in that case, retry once with a broader query.\n2. From the results, filter out anything under 50,000 stars, then pick the 5 most relevant and interesting repositories from what remains. The search response already contains stars, forks, description, language, topics, html_url (the direct repo link), and dates — use that data directly instead of re-fetching it. NEVER fabricate a link; always use the exact html_url from the search result.\n3. For EACH of the 5 chosen repositories, call the Read GitHub README tool exactly once to understand what it does and how it works.\n4. Only call the Get GitHub Repository tool for a repo if some required field is genuinely missing from the search result and the README doesn't cover it. Treat this as an exception, not a routine step.\n5. Never invent repository information you did not retrieve.\n6. Once you have search data + README for all 5 repos (all with 50K+ stars), stop calling tools and write the final analysis immediately — do not keep double-checking.\n\nIf a tool fails, retry once with the exact owner/repo returned by GitHub Search, then move on rather than looping.\n\n=== OUTPUT FORMAT — STRICT — REMEMBER: WRITE IN ARABIC, NOT RUSSIAN, NOT ENGLISH ===\nYour raw text output will be automatically converted downstream into Telegram-safe HTML (a script converts *word* into bold and _word_ into italics for you). Still, follow this format exactly so that conversion works correctly:\n\n- NEVER use pipe characters ( | ) or Markdown tables.\n- NEVER write raw HTML tags yourself (no <br>, <b>, <i>, etc.) — use the plain-character markers below instead, the conversion is handled for you.\n- NEVER use ### or ## or # headings.\n- Use a SINGLE asterisk for bold, like *this*, never double asterisks, and always close it on the same line.\n- Use a hyphen ( - ) for bullet points, never numbers with dots for sub-items.\n- Separate each repository block, and each section within it, with a real blank line (\\n\\n) — never <br>.\n- The link must be a plain URL on its own line so Telegram auto-detects it (do not wrap it in Markdown link syntax).\n- ALL labels and sentences below must be written in Arabic, exactly as shown, not translated into any other language.\n\nRepeat this exact block for each of the 5 repositories (each with 50K+ stars), replacing the placeholders (write your own real content in Arabic, do not leave placeholder words like \"takeaway 1\" untouched):\n\n*1. owner/repo-name* ⭐ 12345\nhttps://github.com/owner/repo-name\n\n_One short sentence description, in Arabic._\n\n- *ماذا يفعل:* ...\n- *كيف يعمل:* ...\n- *التقنيات الأساسية:* ...\n- *الميزات المهمة:* ...\n- *أفكار للاستغلال:* 2-3 أفكار عملية ومحددة كيف يمكن الاستفادة من هذا المستودع بالضبط (مثلاً: دمجه في سير عمل n8n، استخدامه كواجهة API مجانية، بناء وكيل ذكي فوقه، استخدامه كبديل مجاني لأداة مدفوعة) — أفكار حقيقية قابلة للتنفيذ وليست وصفاً عاماً\n- *درجة الاهتمام:* 8/10\n\nAfter all 5 repositories, add one final closing block, still using only single asterisks for bold and hyphens for bullets, never a heading, with REAL takeaways you wrote yourself in Arabic (never leave the literal words \"takeaway 1\"):\n\n*خلاصة سريعة*\n\n- (فكرة وتوصية استراتيجية بالعربية)\n- (فكرة وتوصية استراتيجية بالعربية)\n- (فكرة وتوصية استراتيجية بالعربية)",
+          "maxIterations": 10,
+          "passthroughBinaryImages": true,
+          "passthroughBinaryPdfs": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        3472
+      ],
+      "id": "f18498ac-c5de-4c2b-a23c-768583f8ba3d",
+      "name": "AI Agent",
+      "retryOnFail": false,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "toolDescription": "Read the README of a GitHub repository.\n\nYou MUST provide:\n- owner = GitHub username/organization only\n- repo = repository name only\n\nExample:\nowner = n8n-io\nrepo = n8n\n\nDo not provide URLs or owner/repository combined values.\nUse this tool to understand the repository before explaining it.\nUse this tool after selecting a repository.\nIt is used to understand what the project does, how it works,\nits architecture, installation, technologies, and use cases.\nUse this after GitHub Search when you need detailed information about a selected repository.\n\nThe repository must be provided in OWNER/REPOSITORY format.",
+        "url": "=https://api.github.com/repos/{{$fromAI('owner', 'GitHub repository owner/login only, for example n8n-io', 'string')}}/{{$fromAI('repo', 'GitHub repository name only, for example n8n', 'string')}}/readme",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        752,
+        3712
+      ],
+      "id": "ba0cf140-60d1-4e53-bf3a-091dae113b04",
+      "name": "README_READER"
+    },
+    {
+      "parameters": {
+        "jsCode": "const maxChunkSize = 4000;\nconst fullText = $json.output || \"\";\n\n// The model writes *bold* and _italic_ using plain characters, which is\n// fragile: if it ever leaves one unmatched (very common with repo names\n// containing underscores), Telegram's Markdown parser rejects the whole\n// message with \"can't parse entities\". To make this bulletproof, we do NOT\n// rely on the model's own markdown being balanced. Instead: escape any raw\n// HTML special characters first, then deterministically convert *word* and\n// _word_ pairs into proper <b> / <i> tags ourselves. Any leftover stray\n// asterisk/underscore that never found a partner is simply left as a plain,\n// harmless character (Telegram's HTML mode does not error on stray text).\nfunction toTelegramHtml(text) {\n  let out = text\n    .replace(/&/g, \"&amp;\")\n    .replace(/</g, \"&lt;\")\n    .replace(/>/g, \"&gt;\");\n\n  // *bold* -> <b>bold</b> (single line only, non-greedy)\n  out = out.replace(/\\*([^\\n*]+?)\\*/g, \"<b>$1</b>\");\n\n  // _italic_ -> <i>italic</i>, but never inside a word (avoids breaking\n  // underscores that are part of repo names or URLs like owner/repo_name)\n  out = out.replace(/(^|[^a-zA-Z0-9_])_([^\\n_]+?)_(?![a-zA-Z0-9_])/g, \"$1<i>$2</i>\");\n\n  return out;\n}\n\nconst htmlText = toTelegramHtml(fullText);\n\n// Split on paragraph boundaries (blank lines) so a chunk never cuts\n// an HTML tag in half.\nconst paragraphs = htmlText.split(/\\n\\n+/).filter(p => p.trim().length > 0);\nconst chunks = [];\nlet current = \"\";\n\nfor (const para of paragraphs) {\n  const candidate = current ? current + \"\\n\\n\" + para : para;\n\n  if (candidate.length > maxChunkSize && current) {\n    chunks.push({ json: { chunk: current } });\n    current = para;\n  } else {\n    current = candidate;\n  }\n\n  // Edge case: a single paragraph is itself longer than maxChunkSize.\n  while (current.length > maxChunkSize) {\n    chunks.push({ json: { chunk: current.substring(0, maxChunkSize) } });\n    current = current.substring(maxChunkSize);\n  }\n}\n\nif (current) {\n  chunks.push({ json: { chunk: current } });\n}\n\nreturn chunks;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        3472
+      ],
+      "id": "f650bde8-fa0f-4b19-b2ce-d64b72117d3f",
+      "name": "LIMIT_SIZE_OF_TELEGRAM_MESSAGE"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.chunk }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        3472
+      ],
+      "id": "cf104841-9dce-423a-9f3c-c136ed5ae829",
+      "name": "Send a text message",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search GitHub repositories. Find recent and interesting repositories related to: automation (especially n8n and AI workflow automation), AI Agents (agentic frameworks, autonomous/multi-agent systems), AI models (new open-source LLM releases), free/low-cost AI tokens and APIs (free-tier inference providers), RAG, and MCP. The response includes html_url — the direct link to each repository — always preserve it exactly.",
+        "url": "https://api.github.com/search/repositories",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `GitHub repository search query. Example: AI agents pushed:>2026-08-25 stars:>100`, 'string') }}"
+            },
+            {
+              "name": "sort",
+              "value": "stars"
+            },
+            {
+              "name": "order",
+              "value": "desc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        3712
+      ],
+      "id": "d967bca0-a4a8-411b-8879-39f21fdd29d9",
+      "name": "Search_Favorites_REPOS_GITHUB"
+    },
+    {
+      "parameters": {
+        "toolDescription": "OPTIONAL fallback: get detailed information about a specific GitHub repository.\n\nDo NOT call this for every repository — the GitHub Search tool's results already include stars, forks, description, language, topics, issues, and dates for each repo. Only call this tool if a specific field you need is missing from the search result.\n\nThe repository must be provided in OWNER/REPOSITORY format.\n\nExample:\nn8n-io/n8n",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', `GitHub repository in OWNER/REPOSITORY format, for example n8n-io/n8n or openclaw/openclaw`, 'string') }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        576,
+        3712
+      ],
+      "id": "ecf87633-0aef-4f33-90af-3ca6153d3c97",
+      "name": "HELP SEARCH TOOL (en cas d'abssence des info collecteés par tool SEARCH_FAV_REPOS_GITHUB)"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "GITHUB",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        400,
+        3712
+      ],
+      "id": "46aec33a-7204-4799-b733-db549eba086a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        48,
+        3712
+      ],
+      "id": "9a38acb9-dcd8-42f2-9793-831f481aa428",
+      "name": "OpenRouter Chat Model1"
+    },
+    {
+      "parameters": {
+        "content": "## 📡 GitHub Radar — Part 1: Autonomous Daily Digest 🤖\n\nAutonomous scheduled workflow scanning GitHub for trending repositories.\n\n**Flow:** Schedule Trigger ➔ AI Agent (Search & Analyze) ➔ Limit Message Size ➔ Telegram Broadcast\n\n• ⏰ **Trigger:** Cron Schedule (Runs automatically every morning)\n• 🔍 **Tools:** GitHub Search API + README Reader (100% Grounded, No Hallucination)\n• 🧠 **Models:** Primary LLM + Fallback LLM via OpenRouter\n• 📊 **Output:** Curated daily summary delivered directly to Telegram\n  - Problem solved & Standout features\n  - Practical ideas to stand out / Build on it\n  - Relevance & Innovation Score (1 to 10)",
+        "height": 608,
+        "width": 1328,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -384,
+        3264
+      ],
+      "id": "332d6c2c-6916-471b-b333-5a77fa576e92",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### 🚨 Modèle de Secours (Cold Standby) 🛡️\n\nCe modèle (**NVIDIA Nemotron**) est configuré comme **solution d'urgence**.\n\nEn cas de panne, d'indisponibilité de l'API ou d'épuisement des quotas sur OpenRouter, il peut être connecté instantanément comme fallback principal de l'agent pour garantir une disponibilité continue 24/7.",
+        "height": 320,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        3456
+      ],
+      "id": "56c45fcb-6a02-42f5-9230-ee1031f7b89d",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "NVIDIA Nemotron Chat Model3": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "LIMIT_SIZE_OF_TELEGRAM_MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "README_READER": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LIMIT_SIZE_OF_TELEGRAM_MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search_Favorites_REPOS_GITHUB": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HELP SEARCH TOOL (en cas d'abssence des info collecteés par tool SEARCH_FAV_REPOS_GITHUB)": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Africa/Tunis",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "nodeGroups": [],
+  "tags": []
+}
