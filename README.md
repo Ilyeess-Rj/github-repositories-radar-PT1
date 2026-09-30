@@ -4,9 +4,13 @@
 [![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://telegram.org/)
 [![LangChain](https://img.shields.io/badge/LangChain-Agent-1C3C3C?style=for-the-badge)](https://langchain.com/)
 [![GitHub API](https://img.shields.io/badge/GitHub-REST_API-181717?style=for-the-badge&logo=github&logoColor=white)](https://docs.github.com/en/rest)
+[![Language: Arabic Only](https://img.shields.io/badge/Language-Arabic_Only_%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%81%D9%82%D8%B7-009688?style=for-the-badge)](README.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](LICENSE)
 
 > 📡 **An autonomous, scheduled n8n workflow that scans GitHub daily for trending, high-impact repositories (50,000+ stars) in AI, autonomous agents, and workflow automation. It reads real READMEs without hallucination and delivers structured Arabic intelligence reports directly to your Telegram.**
+
+> 🌍 **Language Scope (نطاق اللغة):**  
+> This system is engineered and optimized **exclusively for the Arabic language** (يدعم اللغة العربية فقط). All daily briefs, technical synthesis, evaluation criteria, and Telegram outputs are generated strictly in Arabic.
 
 👨‍💻 **Built with ❤️ by M.I.R.**
 
