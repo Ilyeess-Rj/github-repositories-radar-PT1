@@ -35,7 +35,7 @@ This repository is **Part 1** of the **GitHub Radar** system. The complete syste
 
 | Module | Primary Trigger | Core Purpose | Repository Link |
 | :--- | :--- | :--- | :--- |
-| **Part 1 (This Repository)** | `Schedule Trigger` (Cron) | **Autonomous Daily Digest:** Runs automatically on schedule, scans trending repos (50K+ stars), reads real documentation, and broadcasts curated briefs. | [github-repositories-radar-part1](https://github.com/Ilyeess-Rj/github-repositories-radar-part1) |
+| **Part 1 (This Repository)** | `Schedule Trigger` (Cron) | **Autonomous Daily Digest:** Runs automatically on schedule, scans trending repos (50K+ stars), reads real documentation, and broadcasts curated briefs. | [github-repositories-radar-PT1 (Part 1)](https://github.com/Ilyeess-Rj/github-repositories-radar-PT1) |
 | **Part 2** | `Telegram Trigger` (Webhook) | **Interactive On-Demand Assistant:** Answers real-time user questions about any repository with Arabic voice narration (ElevenLabs), text analysis, and diagrams. | [github-repositories-radar_PT2 (Part 2)](https://github.com/Ilyeess-Rj/github-repositories-radar_PT2) |
 
 ### ⚠️ Why are Part 1 & Part 2 Split into Separate Workflows?
